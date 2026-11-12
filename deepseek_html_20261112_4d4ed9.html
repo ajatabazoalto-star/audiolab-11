@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight 11 — Simple Past & Aviation (Audio Lab A2/B1)</title>
+<style>
+  :root{
+    --navy:#0b1f3a; --navy2:#122a4d; --sky:#1ea7e8; --amber:#f5a623;
+    --green:#28c76f; --red:#ea5455; --purple:#8e6ef2;
+    --ink:#122036; --paper:#f4f8fc; --card:#ffffff; --muted:#6b7c93;
+    --radius:16px; --shadow:0 8px 24px rgba(11,31,58,0.12);
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);}
+  body{min-height:100vh;}
+  header.topbar{background:linear-gradient(135deg,var(--navy) 0%, var(--navy2) 100%);color:#fff;padding:16px 18px 12px;position:sticky;top:0;z-index:50;box-shadow:0 4px 18px rgba(0,0,0,.25);}
+  .topbar-inner{max-width:1150px;margin:0 auto;}
+  .badge{display:inline-block;background:var(--sky);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:20px;text-transform:uppercase;margin-bottom:8px;}
+  header.topbar h1{margin:0 0 4px;font-size:clamp(18px,3.6vw,26px);}
+  header.topbar p{margin:0 0 12px;color:#b9c8de;font-size:13px;}
+  nav.phasenav{display:flex;gap:6px;flex-wrap:wrap;}
+  nav.phasenav button{flex:1 1 80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#dce6f5;padding:8px 5px;border-radius:10px;font-size:10px;font-weight:600;cursor:pointer;transition:.2s;text-align:center;}
+  nav.phasenav button .num{display:block;font-size:9px;font-weight:800;color:var(--amber);letter-spacing:1px;margin-bottom:2px;}
+  nav.phasenav button.active{background:var(--sky);border-color:var(--sky);color:#fff;}
+  nav.phasenav button:hover:not(.active){background:rgba(255,255,255,0.16);}
+  .progress-outer{height:6px;background:rgba(255,255,255,0.15);border-radius:6px;margin-top:10px;overflow:hidden;}
+  .progress-inner{height:100%;width:0%;background:linear-gradient(90deg,var(--sky),var(--amber));transition:width .4s ease;}
+  main{max-width:1150px;margin:0 auto;padding:26px 18px 70px;}
+  .phase{display:none;animation:fadeIn .4s ease;}
+  .phase.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .phase-title{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .phase-title .bar{width:5px;height:26px;background:var(--sky);border-radius:3px;}
+  .phase-title h2{margin:0;font-size:clamp(19px,3.2vw,25px);}
+  .phase-sub{color:var(--muted);margin:0 0 22px;font-size:14.5px;max-width:760px;}
+  .lab-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 22px;margin-bottom:20px;}
+  .audio-player-box{background:#eef4fb;border-left:5px solid var(--sky);padding:16px 20px;border-radius:10px;display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+  .audio-btn-group{display:flex;gap:8px;flex-shrink:0;}
+  .audio-btn{width:44px;height:44px;border-radius:50%;color:#fff;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;box-shadow:0 4px 12px rgba(11,31,58,0.15);}
+  .audio-btn:hover{transform:scale(1.08);}
+  .audio-btn.play-btn{background:var(--sky);}
+  .audio-btn.play-btn:hover{background:var(--navy);}
+  .audio-btn.pause-btn{background:var(--amber);}
+  .audio-btn.pause-btn:hover{background:var(--red);}
+  .audio-btn.small{width:36px;height:36px;font-size:14px;}
+  .audio-info{flex:1;min-width:150px;}
+  .audio-info h4{margin:0 0 4px;font-size:15px;color:var(--navy);}
+  .audio-info p{margin:0;font-size:12.5px;color:var(--muted);}
+  .question-block{margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid #eef4fb;}
+  .question-block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .q-text{font-size:15.5px;font-weight:700;color:var(--ink);margin-bottom:12px;}
+  .opt-grid{display:grid;grid-template-columns:1fr;gap:10px;}
+  .opt-btn{background:#f7fafd;border:2px solid #e2ebf3;border-radius:12px;padding:12px 16px;font-size:14px;font-weight:600;color:var(--ink);text-align:left;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:10px;}
+  .opt-btn:hover{border-color:var(--sky);background:#fff;}
+  .opt-btn.correct{background:#e8f9ee;border-color:var(--green);color:#1c8a4d;}
+  .opt-btn.wrong{background:#fdecec;border-color:var(--red);color:#c53030;}
+  .opt-btn:disabled{opacity:0.6;cursor:not-allowed;}
+  .complete-item{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #eef4fb;}
+  .complete-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+  .complete-sentence{font-size:17px;font-weight:700;color:var(--navy);margin:12px 0;line-height:2.2;}
+  .blank-input{display:inline-block;min-width:140px;padding:6px 10px;border:2px dashed var(--sky);border-radius:6px;font-size:15px;font-weight:700;color:var(--ink);background:#fff;outline:none;text-align:center;margin:0 4px;}
+  .blank-input:focus{border-color:var(--navy);border-style:solid;}
+  .blank-input.correct{border-color:var(--green);border-style:solid;background:#e8f9ee;color:#1c8a4d;}
+  .blank-input.wrong{border-color:var(--red);border-style:solid;background:#fdecec;color:#c53030;}
+  .blank-input:disabled{opacity:0.75;}
+  .type-badge{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;margin-left:6px;letter-spacing:.5px;text-transform:uppercase;}
+  .type-badge.reg{background:#e8f0fe;color:#1a73e8;}
+  .type-badge.irr{background:#fce8e6;color:#ea5455;}
+  .type-badge.term{background:#e6f4ea;color:#28c76f;}
+  .complete-check-btn{background:var(--sky);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13.5px;transition:.2s;margin-top:10px;}
+  .complete-check-btn:hover{background:var(--navy);}
+  .complete-check-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  .complete-feedback{font-size:13px;font-weight:700;margin-top:8px;min-height:18px;}
+  .complete-feedback.ok{color:var(--green);}
+  .complete-feedback.no{color:var(--red);}
+  .attempt-tag{display:inline-block;font-size:11px;font-weight:800;color:var(--amber);background:#fff2da;padding:3px 9px;border-radius:20px;margin-left:8px;letter-spacing:.5px;}
+  .attempt-tag.maxed{color:var(--red);background:#fdecec;font-weight:900;}
+  .retry-note{background:#fff6e6;border-left:5px solid var(--amber);padding:12px 16px;border-radius:10px;font-size:13px;color:#7a5300;margin-bottom:20px;}
+  .final-wrap{max-width:750px;margin:0 auto;text-align:center;}
+  .final-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:40px 26px;}
+  .medal{font-size:80px;margin-bottom:6px;}
+  .final-card h3{font-size:26px;color:var(--navy);margin:0 0 4px;}
+  .final-card .medal-label{font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:1px;font-size:13px;margin-bottom:18px;}
+  .final-score-big{font-size:52px;font-weight:900;color:var(--sky);margin-bottom:4px;}
+  .final-score-sub{color:var(--muted);font-size:13px;margin-bottom:26px;}
+  .final-breakdown{display:flex;flex-direction:column;gap:12px;text-align:left;margin-bottom:26px;}
+  .fb-row{display:flex;align-items:center;gap:12px;}
+  .fb-row .fb-label{width:210px;font-size:13px;font-weight:700;color:var(--ink);flex-shrink:0;}
+  .fb-row .fb-bar-outer{flex:1;height:10px;background:#e2ebf3;border-radius:6px;overflow:hidden;}
+  .fb-row .fb-bar-inner{height:100%;background:linear-gradient(90deg,var(--sky),var(--green));border-radius:6px;}
+  .fb-row .fb-val{width:60px;text-align:right;font-size:12.5px;font-weight:800;color:var(--muted);}
+  .restart-btn{background:var(--amber);border:none;color:#3a2600;padding:13px 26px;border-radius:10px;font-weight:800;cursor:pointer;font-size:14.5px;}
+  .restart-btn:hover{background:var(--sky);color:#fff;}
+  .result-box{margin-top:20px;padding:20px;border-radius:12px;font-weight:700;font-size:18px;}
+  .result-box.pass{background:#e8f9ee;color:var(--green);border:2px solid var(--green);}
+  .result-box.fail{background:#fdecec;color:var(--red);border:2px solid var(--red);}
+  footer.bottom{text-align:center;color:var(--muted);font-size:12px;padding:20px;}
+  footer.bottom span{color:var(--sky);font-weight:700;}
+  @media(max-width:640px){
+    nav.phasenav{gap:4px;}
+    nav.phasenav button{font-size:9px;padding:6px 3px;flex:1 1 70px;}
+    .fb-row .fb-label{width:130px;font-size:11px;}
+    .audio-player-box{gap:10px;}
+    .audio-btn-group{gap:5px;}
+    .audio-btn{width:38px;height:38px;font-size:15px;}
+    .blank-input{min-width:100px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="badge">Aviation English · Flight 11 · Audio Lab</span>
+    <h1>Flight 11 — Simple Past &amp; Aviation Operations</h1>
+    <p>Past Tense Verbs (Regular &amp; Irregular), Aviation Vocabulary &amp; ATC Communications · 100% Listening</p>
+    <nav class="phasenav" id="phaseNav">
+      <button class="phase-btn active" data-phase="1"><span class="num">SEC 1</span>Complete Word</button>
+      <button class="phase-btn" data-phase="2"><span class="num">SEC 2</span>Medium List.</button>
+      <button class="phase-btn" data-phase="3"><span class="num">SEC 3</span>Long List.</button>
+      <button class="phase-btn" data-phase="4"><span class="num">SEC 4</span>Listening Drill</button>
+      <button class="phase-btn" data-phase="5"><span class="num">SEC 5</span>Past Verb Recog.</button>
+      <button class="phase-btn" data-phase="6"><span class="num">SEC 6</span>Reg vs Irreg</button>
+      <button class="phase-btn" data-phase="7"><span class="num">SEC 7</span>Captain's Story</button>
+      <button class="phase-btn" data-phase="8"><span class="num">SEC 8</span>Roleplay</button>
+      <button class="phase-btn" data-phase="9"><span class="num">SEC 9</span>Final Review</button>
+    </nav>
+    <div class="progress-outer"><div class="progress-inner" id="topProgress"></div></div>
+  </div>
+</header>
+
+<main>
+
+  <section class="phase active" id="phase1">
+    <div class="phase-title"><span class="bar"></span><h2>Section 1: Complete the Missing Word (20 sentences)</h2></div>
+    <p class="phase-sub">Listen to each sentence and complete the missing past-tense verb or aviation term. 3 attempts per sentence.</p>
+    <div class="retry-note">💡 Escucha la oración completa y escribe SOLO la palabra que falta.</div>
+    <div class="lab-card" id="completeArea"></div>
+  </section>
+
+  <section class="phase" id="phase2">
+    <div class="phase-title"><span class="bar"></span><h2>Section 2: Medium Listening — Flight Operations</h2></div>
+    <p class="phase-sub">Listen to two short transmissions and answer the questions. 3 attempts per question.</p>
+    <div id="listenMediumArea"></div>
+  </section>
+
+  <section class="phase" id="phase3">
+    <div class="phase-title"><span class="bar"></span><h2>Section 3: Long Listening — Flight 11 Log</h2></div>
+    <p class="phase-sub">Listen to the flight report and answer the questions. 3 attempts per question.</p>
+    <div id="listenLongArea"></div>
+  </section>
+
+  <section class="phase" id="phase4">
+    <div class="phase-title"><span class="bar"></span><h2>Section 4: Listening Drill — Choose What You Heard (16)</h2></div>
+    <p class="phase-sub">Listen carefully and choose the option that matches exactly what you heard. 3 attempts per question.</p>
+    <div class="retry-note">🎧 Solo verás las opciones. Debes escuchar el audio para identificar la frase correcta.</div>
+    <div class="lab-card" id="drillArea"></div>
+  </section>
+
+  <section class="phase" id="phase5">
+    <div class="phase-title"><span class="bar"></span><h2>Section 5: Past Verb Recognition — Which Verb Did You Hear?</h2></div>
+    <p class="phase-sub">Listen to the sentence and choose which past verb you heard. 15 exercises. 3 attempts per question.</p>
+    <div class="retry-note">🎧 Escucha la oración completa y elige el verbo en pasado que escuchaste entre las 4 opciones.</div>
+    <div class="lab-card" id="verbRecogArea"></div>
+  </section>
+
+  <section class="phase" id="phase6">
+    <div class="phase-title"><span class="bar"></span><h2>Section 6: Simple Past — Regular vs Irregular</h2></div>
+    <p class="phase-sub">Listen to the sentence and choose whether the past-tense verb is REGULAR (-ed) or IRREGULAR. 3 attempts per question.</p>
+    <div class="retry-note">🎧 Escucha la oración y elige si el verbo en pasado es Regular o Irregular.</div>
+    <div class="lab-card" id="grammarArea"></div>
+  </section>
+
+  <section class="phase" id="phase7">
+    <div class="phase-title"><span class="bar"></span><h2>Section 7: Captain's Story — Flight 11 Incident</h2></div>
+    <p class="phase-sub">Listen to Captain Torres talking about Flight 11. Then answer the 6 questions. 3 attempts per question.</p>
+    <div class="retry-note">💡 Escucha la historia completa y elige la respuesta correcta según lo que escuchaste.</div>
+    <div class="lab-card" id="storyArea"></div>
+  </section>
+
+  <section class="phase" id="phase8">
+    <div class="phase-title"><span class="bar"></span><h2>Section 8: Listening Roleplay — Choose the Correct Response</h2></div>
+    <p class="phase-sub">Listen to the question and select the correct response. 3 attempts per question.</p>
+    <div class="retry-note">🎧 Escucha la pregunta (no la verás escrita) y elige la respuesta correcta.</div>
+    <div class="lab-card" id="roleplayArea"></div>
+  </section>
+
+  <section class="phase" id="phase9">
+    <div class="phase-title"><span class="bar"></span><h2>Final Review &amp; Operational Summary</h2></div>
+    <p class="phase-sub">Comprehensive evaluation of your Flight 11 performance. Minimum 80% to pass.</p>
+    <div class="final-wrap" id="finalArea"></div>
+  </section>
+
+</main>
+
+<footer class="bottom">✈️ Flight 11 Complete · <span>Simple Past &amp; Aviation Operations · Audio Lab</span></footer>
+
+<script>
+/* ============================================================
+   AUDIO SCRIPTS
+   ============================================================ */
+const AUDIOS = {
+  // Section 1 — 20 sentences
+  c1:  "Engineers inspected the hydraulic seals prior to departure.",
+  c2:  "Heavy fog forced the flight crew to divert to an alternate airport.",
+  c3:  "The first officer set the transponder code to 4201.",
+  c4:  "The cabin pressure rose suddenly after leveling off.",
+  c5:  "ATC held Flight 11 over waypoint Alpha.",
+  c6:  "The crew flew through severe crosswind during final approach.",
+  c7:  "Ground control cleared Flight 11 to taxi to Runway 22 Left.",
+  c8:  "Mechanics calibrated the altimeter instruments.",
+  c9:  "The aircraft landed safely at the alternate airport.",
+  c10: "The crew departed from Runway 22 Left on time.",
+  c11: "The pilot initiated the go-around procedure.",
+  c12: "The captain spoke directly with apron operations.",
+  c13: "The controller requested an ident from the aircraft.",
+  c14: "The crew checked the transponder before takeoff.",
+  c15: "The pilot took the radio frequency from the copilot.",
+  c16: "The airline delayed the flight due to weather.",
+  c17: "The aircraft arrived at the gate on time.",
+  c18: "The captain told the copilot the new route.",
+  c19: "The crew authorized a direct climb to flight level three one zero.",
+  c20: "The first officer read the landing checklist aloud.",
+
+  // Section 2
+  s2a: "Tower to Flight 11. Ground control cleared Flight 11 to taxi to Runway 22 Left. Engineers inspected the hydraulic seals prior to departure. The first officer set the transponder code to 4201. ATC held Flight 11 over waypoint Alpha due to airport congestion. The crew flew through severe crosswind during final approach. Report when ready for takeoff.",
+
+  s2b: "Captain's log for Flight 11. Heavy fog forced the flight crew to divert to an alternate airport. The cabin pressure rose suddenly after leveling off. Mechanics calibrated the altimeter instruments. The pilot initiated a go-around due to unstable approach. Safety alert warned pilots about ground proximity. The captain spoke directly with apron operations and the crew was authorized for a direct climb to flight level three one zero.",
+
+  // Section 3
+  s3: "This is the Flight 11 Communication Log in Zulu Time. At twelve fifteen, the crew inspected the flaps while taxiing along Taxiway Echo. At twelve twenty-eight, the pilot set the transponder code to 6204 as instructed. At twelve forty-five, Flight 11 was held in a standard two-minute racetrack holding pattern over waypoint Alpha. At thirteen oh two, the aircraft aborted the approach and diverted due to a strong crosswind. The crew then landed at an alternate airport. Mechanics calibrated the altimeter before the next flight. The captain spoke with apron operations to authorize the direct climb to flight level three one zero. Precision in aviation English ensures unambiguous radio reports, enhancing situational awareness and flight safety across all phases.",
+
+  // Section 4 — Listening Drill (16)
+  dr1: "Engineers inspected the hydraulic seals.",
+  dr2: "Heavy fog forced the flight crew to divert.",
+  dr3: "The first officer set the transponder code.",
+  dr4: "The cabin pressure rose suddenly.",
+  dr5: "ATC held Flight 11 over waypoint Alpha.",
+  dr6: "The crew flew through severe crosswind.",
+  dr7: "Ground control cleared Flight 11 to taxi.",
+  dr8: "Mechanics calibrated the altimeter instruments.",
+  dr9: "The aircraft landed safely at the alternate airport.",
+  dr10: "The crew departed from Runway 22 Left.",
+  dr11: "The pilot initiated the go-around procedure.",
+  dr12: "The captain spoke with apron operations.",
+  dr13: "The controller requested an ident.",
+  dr14: "The crew checked the transponder before takeoff.",
+  dr15: "The aircraft arrived at the gate on time.",
+  dr16: "The crew authorized a direct climb.",
+
+  // Section 5 — Past Verb Recognition (15)
+  vr1:  "The captain landed the aircraft safely.",
+  vr2:  "The crew inspected the hydraulic seals.",
+  vr3:  "The pilot diverted to an alternate airport.",
+  vr4:  "ATC held Flight 11 over waypoint Alpha.",
+  vr5:  "The crew flew through severe crosswind.",
+  vr6:  "The captain spoke with apron operations.",
+  vr7:  "The first officer set the transponder code.",
+  vr8:  "Ground control cleared Flight 11 to taxi.",
+  vr9:  "Mechanics calibrated the altimeter.",
+  vr10: "The cabin pressure rose suddenly.",
+  vr11: "The crew departed from Runway 22 Left.",
+  vr12: "The pilot initiated a go-around.",
+  vr13: "The controller requested an ident.",
+  vr14: "The aircraft arrived at the gate.",
+  vr15: "The captain authorized a direct climb.",
+
+  // Section 6 — Reg vs Irr
+  sp1:  "Engineers inspected the hydraulic seals.",
+  sp2:  "The crew flew through severe crosswind.",
+  sp3:  "The pilot diverted to an alternate airport.",
+  sp4:  "ATC held Flight 11 over waypoint Alpha.",
+  sp5:  "Mechanics calibrated the altimeter.",
+  sp6:  "The cabin pressure rose suddenly.",
+  sp7:  "Ground control cleared Flight 11 to taxi.",
+  sp8:  "The first officer set the transponder code.",
+  sp9:  "The crew authorized a direct climb.",
+  sp10: "The captain spoke with apron operations.",
+
+  // Section 7 — Captain's Story
+  story: "Hi, I'm Captain Torres. I want to tell you about Flight 11 last Tuesday. We inspected the hydraulic seals before departure. The flight was going to Paris, but heavy fog forced us to divert to an alternate airport. The first officer set the transponder code to 4201. ATC held us over waypoint Alpha for about fifteen minutes. When we started the approach, we flew through severe crosswind. The cabin pressure rose suddenly after leveling off. I spoke directly with apron operations. We initiated a go-around due to unstable approach. Ground control cleared us to taxi to Runway 22 Left. Mechanics calibrated the altimeter instruments. In the end, we landed safely and everyone was fine. The flight didn't receive radar vectoring at first, but eventually we got it. It was a challenging day, but my crew was excellent.",
+
+  // Section 8 — Listening Roleplay
+  rp1: "What did engineers inspect?",
+  rp2: "Why did the crew divert?",
+  rp3: "What did the first officer set?",
+  rp4: "What did ATC do with Flight 11?",
+  rp5: "What did the crew fly through?",
+  rp6: "What did ground control clear?",
+  rp7: "What did mechanics calibrate?",
+  rp8: "Why did the pilot initiate a go-around?",
+  rp9: "Where did Flight 11 hold?",
+  rp10: "Who did the captain speak with?"
+};
+
+/* ============================================================
+   AUDIO PLAYER
+   ============================================================ */
+function playAudio(key){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(AUDIOS[key]);
+  u.lang = 'en-US';
+  u.rate = 0.65;
+  u.pitch = 1;
+  const voices = window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en'));
+  if(enVoice) u.voice = enVoice;
+  window.speechSynthesis.speak(u);
+}
+function pauseAudio(){
+  if(!('speechSynthesis' in window)) return;
+  if(window.speechSynthesis.speaking && !window.speechSynthesis.paused){
+    window.speechSynthesis.pause();
+  }
+}
+window.speechSynthesis && window.speechSynthesis.getVoices();
+
+/* ============================================================
+   SOUND FX
+   ============================================================ */
+let audioCtx;
+function getCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playDing(){
+  try{
+    const ctx = getCtx();
+    [880, 1320].forEach((freq, i)=>{
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type='sine'; osc.frequency.value=freq;
+      const start=ctx.currentTime+i*0.09;
+      gain.gain.setValueAtTime(0.0001,start);
+      gain.gain.exponentialRampToValueAtTime(0.25,start+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001,start+0.25);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start); osc.stop(start+0.28);
+    });
+  }catch(e){}
+}
+function playBuzz(){
+  try{
+    const ctx = getCtx();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.type='sawtooth'; osc.frequency.value=130;
+    const start=ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001,start);
+    gain.gain.exponentialRampToValueAtTime(0.2,start+0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001,start+0.35);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(start); osc.stop(start+0.38);
+  }catch(e){}
+}
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+/* ============================================================
+   GLOBAL STATS
+   ============================================================ */
+const STATS = {
+  totalCorrect: 0,
+  totalWrong: 0,
+  sections: {
+    s1: { correct: 0, wrong: 0, max: 20 },
+    s2: { correct: 0, wrong: 0, max: 10 },
+    s3: { correct: 0, wrong: 0, max: 6 },
+    s4: { correct: 0, wrong: 0, max: 16 },
+    s5: { correct: 0, wrong: 0, max: 15 },
+    s6: { correct: 0, wrong: 0, max: 10 },
+    s7: { correct: 0, wrong: 0, max: 6 },
+    s8: { correct: 0, wrong: 0, max: 10 }
+  }
+};
+function addCorrect(sec){ STATS.totalCorrect++; STATS.sections[sec].correct++; }
+function addWrong(sec){ STATS.totalWrong++; STATS.sections[sec].wrong++; }
+
+/* ============================================================
+   SECTION 1 — COMPLETE WORD (20)
+   ============================================================ */
+const COMPLETE_DATA = [
+  { id:'c1',  audio:'c1',  type:'reg',  sentence:'Engineers ______ the hydraulic seals.', answer:'inspected' },
+  { id:'c2',  audio:'c2',  type:'reg',  sentence:'The crew ______ to an alternate airport.', answer:'diverted' },
+  { id:'c3',  audio:'c3',  type:'irr',  sentence:'The first officer ______ the transponder code.', answer:'set' },
+  { id:'c4',  audio:'c4',  type:'irr',  sentence:'The cabin pressure ______ suddenly.', answer:'rose' },
+  { id:'c5',  audio:'c5',  type:'irr',  sentence:'ATC ______ Flight 11 over waypoint Alpha.', answer:'held' },
+  { id:'c6',  audio:'c6',  type:'irr',  sentence:'The crew ______ through severe crosswind.', answer:'flew' },
+  { id:'c7',  audio:'c7',  type:'reg',  sentence:'Ground control ______ Flight 11 to taxi.', answer:'cleared' },
+  { id:'c8',  audio:'c8',  type:'reg',  sentence:'Mechanics ______ the altimeter.', answer:'calibrated' },
+  { id:'c9',  audio:'c9',  type:'reg',  sentence:'The aircraft ______ safely at the alternate airport.', answer:'landed' },
+  { id:'c10', audio:'c10', type:'reg',  sentence:'The crew ______ from Runway 22 Left.', answer:'departed' },
+  { id:'c11', audio:'c11', type:'reg',  sentence:'The pilot ______ the go-around procedure.', answer:'initiated' },
+  { id:'c12', audio:'c12', type:'irr',  sentence:'The captain ______ with apron operations.', answer:'spoke' },
+  { id:'c13', audio:'c13', type:'reg',  sentence:'The controller ______ an ident from the aircraft.', answer:'requested' },
+  { id:'c14', audio:'c14', type:'reg',  sentence:'The crew ______ the transponder before takeoff.', answer:'checked' },
+  { id:'c15', audio:'c15', type:'irr',  sentence:'The pilot ______ the radio frequency.', answer:'took' },
+  { id:'c16', audio:'c16', type:'reg',  sentence:'The airline ______ the flight due to weather.', answer:'delayed' },
+  { id:'c17', audio:'c17', type:'reg',  sentence:'The aircraft ______ at the gate on time.', answer:'arrived' },
+  { id:'c18', audio:'c18', type:'irr',  sentence:'The captain ______ the copilot the new route.', answer:'told' },
+  { id:'c19', audio:'c19', type:'reg',  sentence:'The crew ______ a direct climb to FL310.', answer:'authorized' },
+  { id:'c20', audio:'c20', type:'irr',  sentence:'The first officer ______ the landing checklist.', answer:'read' }
+];
+
+const completeState = {};
+
+function buildComplete(){
+  const area = document.getElementById('completeArea');
+  area.innerHTML = COMPLETE_DATA.map((item, i) => {
+    completeState[item.id] = { attempts:0, solved:false, maxAttempts:3 };
+    const parts = item.sentence.split('______');
+    let badge = '';
+    if(item.type === 'reg')  badge = '<span class="type-badge reg">Regular</span>';
+    if(item.type === 'irr')  badge = '<span class="type-badge irr">Irregular</span>';
+    if(item.type === 'term') badge = '<span class="type-badge term">Term</span>';
+    return `
+      <div class="complete-item" id="${item.id}">
+        <div class="audio-btn-group" style="margin-bottom:8px;">
+          <button class="audio-btn play-btn small" onclick="playAudio('${item.audio}')">🔊</button>
+          <button class="audio-btn pause-btn small" onclick="pauseAudio()">⏸</button>
+          <span style="font-weight:700;color:var(--muted);font-size:13px;margin-left:8px;">
+            Sentence ${i+1} ${badge} 
+            <span class="attempt-tag" id="${item.id}-tag">0/3 attempts</span>
+          </span>
+        </div>
+        <div class="complete-sentence">
+          ${parts[0]}<input class="blank-input" id="${item.id}-input" type="text" placeholder="type the word...">${parts[1] || ''}
+        </div>
+        <button class="complete-check-btn" id="${item.id}-check" onclick="checkComplete('${item.id}')">Check</button>
+        <div class="complete-feedback" id="${item.id}-fb"></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function checkComplete(id){
+  const state = completeState[id];
+  if(state.solved) return;
+  if(state.attempts >= state.maxAttempts) return;
+
+  const item = COMPLETE_DATA.find(x => x.id === id);
+  const input = document.getElementById(id+'-input');
+  const fb = document.getElementById(id+'-fb');
+  const tag = document.getElementById(id+'-tag');
+  const val = input.value.trim().toLowerCase();
+
+  if(val.length < 1){
+    fb.textContent = '⚠️ Please type a word.';
+    fb.className = 'complete-feedback no';
+    return;
+  }
+
+  if(val === item.answer.toLowerCase()){
+    state.solved = true;
+    input.disabled = true;
+    input.classList.add('correct');
+    addCorrect('s1');
+    fb.textContent = `✔ Correct! The word is "${item.answer}".`;
+    fb.className = 'complete-feedback ok';
+    playDing();
+    document.getElementById(id+'-check').disabled = true;
+    tag.textContent = '✔ Solved';
+    tag.style.color = 'var(--green)';
+    tag.style.background = '#e8f9ee';
+  } else {
+    state.attempts++;
+    addWrong('s1');
+    input.classList.add('wrong');
+    const rem = state.maxAttempts - state.attempts;
+    fb.textContent = `❌ Not correct. ${rem} attempts left.`;
+    fb.className = 'complete-feedback no';
+    playBuzz();
+    tag.textContent = state.attempts + '/3 attempts';
+    tag.style.color = 'var(--red)';
+    tag.style.background = '#fdecec';
+    setTimeout(()=>{ input.classList.remove('wrong'); }, 800);
+
+    if(state.attempts >= state.maxAttempts){
+      input.disabled = true;
+      document.getElementById(id+'-check').disabled = true;
+      tag.textContent = '❌ Max attempts (3/3)';
+      tag.className = 'attempt-tag maxed';
+      fb.textContent = `❌ Maximum attempts reached. Correct answer: "${item.answer}"`;
+    }
+  }
+}
+
+/* ============================================================
+   SECTIONS 2 & 3 — LISTENING MCQ
+   ============================================================ */
+const LISTEN_MEDIUM = [
+  { id:'lm_a', audio:'s2a', title:'Audio A — Ground Control & Flight 11', sub:'Clearance, inspection, transponder',
+    questions:[
+      { id:'lm_a1', q:'What did ground control clear Flight 11 to do?',
+        options:[{t:'Taxi to Runway 22 Left', c:true},{t:'Take off immediately', c:false},{t:'Land on Runway 22 Left', c:false}]},
+      { id:'lm_a2', q:'What did engineers inspect?',
+        options:[{t:'The hydraulic seals', c:true},{t:'The altimeter', c:false},{t:'The flaps', c:false}]},
+      { id:'lm_a3', q:'What transponder code did the FO set?',
+        options:[{t:'4201', c:true},{t:'7700', c:false},{t:'6204', c:false}]},
+      { id:'lm_a4', q:'Why did ATC hold Flight 11?',
+        options:[{t:'Due to airport congestion', c:true},{t:'Due to weather', c:false},{t:'Due to a technical problem', c:false}]},
+      { id:'lm_a5', q:'What did the crew fly through on final?',
+        options:[{t:'Severe crosswind', c:true},{t:'Heavy fog', c:false},{t:'Turbulence', c:false}]}
+    ]
+  },
+  { id:'lm_b', audio:'s2b', title:'Audio B — Captain\'s Log', sub:'Diversion, calibration and go-around',
+    questions:[
+      { id:'lm_b1', q:'Why did the crew divert?',
+        options:[{t:'Due to heavy fog', c:true},{t:'Due to a technical problem', c:false},{t:'Due to a medical emergency', c:false}]},
+      { id:'lm_b2', q:'What rose suddenly?',
+        options:[{t:'The cabin pressure', c:true},{t:'The altitude', c:false},{t:'The airspeed', c:false}]},
+      { id:'lm_b3', q:'What did mechanics calibrate?',
+        options:[{t:'The altimeter instruments', c:true},{t:'The transponder', c:false},{t:'The hydraulic seals', c:false}]},
+      { id:'lm_b4', q:'Why did the pilot initiate a go-around?',
+        options:[{t:'Due to unstable approach', c:true},{t:'Due to fuel shortage', c:false},{t:'Due to a cabin issue', c:false}]},
+      { id:'lm_b5', q:'Who did the captain speak with?',
+        options:[{t:'Apron operations', c:true},{t:'The passengers', c:false},{t:'The mechanics', c:false}]}
+    ]
+  }
+];
+
+const LISTEN_LONG = [
+  { id:'ll', audio:'s3', title:'Flight 11 — Communication Log', sub:'Full operation report in Zulu Time',
+    questions:[
+      { id:'ll_1', q:'What did the crew inspect at 12:15?',
+        options:[{t:'The flaps', c:true},{t:'The hydraulic seals', c:false},{t:'The altimeter', c:false}]},
+      { id:'ll_2', q:'What transponder code did the pilot set?',
+        options:[{t:'6204', c:true},{t:'4201', c:false},{t:'7700', c:false}]},
+      { id:'ll_3', q:'How long was Flight 11 held in the holding pattern?',
+        options:[{t:'Two minutes', c:true},{t:'Fifteen minutes', c:false},{t:'Thirty minutes', c:false}]},
+      { id:'ll_4', q:'Why did the aircraft divert at 13:02?',
+        options:[{t:'Due to crosswind', c:true},{t:'Due to heavy fog', c:false},{t:'Due to a technical problem', c:false}]},
+      { id:'ll_5', q:'What did mechanics calibrate before the next flight?',
+        options:[{t:'The altimeter', c:true},{t:'The transponder', c:false},{t:'The flaps', c:false}]},
+      { id:'ll_6', q:'What does precision in aviation English ensure?',
+        options:[{t:'Unambiguous radio reports', c:true},{t:'Better passenger service', c:false},{t:'Faster boarding times', c:false}]}
+    ]
+  }
+];
+
+const listenState = {};
+
+function buildListening(containerId, dataList, sectionKey){
+  const container = document.getElementById(containerId);
+  container.innerHTML = dataList.map(item => {
+    const questionsHTML = item.questions.map((q, qi) => {
+      listenState[q.id] = { attempts:0, solved:false, maxAttempts:3 };
+      const shuffled = shuffle([...q.options]);
+      return `
+        <div class="question-block" id="${q.id}">
+          <div class="q-text">${qi+1}. ${q.q} <span class="attempt-tag" id="${q.id}-tag">0/3 attempts</span></div>
+          <div class="opt-grid">
+            ${shuffled.map(o => `<button class="opt-btn" onclick="checkListenMCQ('${q.id}', this, ${o.c}, '${sectionKey}')">${o.t}</button>`).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="lab-card">
+        <div class="audio-player-box">
+          <div class="audio-btn-group">
+            <button class="audio-btn play-btn" onclick="playAudio('${item.audio}')">🔊</button>
+            <button class="audio-btn pause-btn" onclick="pauseAudio()">⏸</button>
+          </div>
+          <div class="audio-info">
+            <h4>${item.title}</h4>
+            <p>${item.sub}</p>
+          </div>
+        </div>
+        ${questionsHTML}
+      </div>
+    `;
+  }).join('');
+}
+
+function checkListenMCQ(qid, btn, isCorrect, sec){
+  const state = listenState[qid];
+  if(state.solved) return;
+  if(state.attempts >= state.maxAttempts) return;
+
+  const block = document.getElementById(qid);
+  const tag = document.getElementById(qid+'-tag');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+    state.solved = true;
+    addCorrect(sec);
+    playDing();
+    tag.textContent = '✔ Correct! (' + (state.attempts+1) + '/3)';
+    tag.style.color = 'var(--green)';
+    tag.style.background = '#e8f9ee';
+  } else {
+    btn.classList.add('wrong');
+    state.attempts++;
+    addWrong(sec);
+    playBuzz();
+    const rem = state.maxAttempts - state.attempts;
+    tag.textContent = state.attempts + '/3 attempts — ' + rem + ' left';
+    tag.style.color = 'var(--red)';
+    tag.style.background = '#fdecec';
+    setTimeout(()=>{ btn.classList.remove('wrong'); }, 600);
+
+    if(state.attempts >= state.maxAttempts){
+      block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+      tag.textContent = '❌ Max attempts (3/3)';
+      tag.className = 'attempt-tag maxed';
+    }
+  }
+}
+
+/* ============================================================
+   SECTION 4 — LISTENING DRILL (16)
+   ============================================================ */
+const DRILL_DATA = [
+  { id:'dr1', audio:'dr1', options:[
+    {t:'Engineers inspected the hydraulic pumps.', c:false},
+    {t:'Engineers inspected the hydraulic seals.', c:true},
+    {t:'Engineers inspected the hydraulic valves.', c:false}
+  ]},
+  { id:'dr2', audio:'dr2', options:[
+    {t:'Heavy rain forced the flight crew to divert.', c:false},
+    {t:'Heavy fog forced the flight crew to divert.', c:true},
+    {t:'Heavy snow forced the flight crew to divert.', c:false}
+  ]},
+  { id:'dr3', audio:'dr3', options:[
+    {t:'The first officer set the transponder code.', c:true},
+    {t:'The first officer set the altimeter.', c:false},
+    {t:'The first officer set the flight plan.', c:false}
+  ]},
+  { id:'dr4', audio:'dr4', options:[
+    {t:'The cabin pressure dropped suddenly.', c:false},
+    {t:'The cabin pressure rose suddenly.', c:true},
+    {t:'The cabin pressure stayed stable.', c:false}
+  ]},
+  { id:'dr5', audio:'dr5', options:[
+    {t:'ATC held Flight 11 over waypoint Alpha.', c:true},
+    {t:'ATC held Flight 11 over waypoint Bravo.', c:false},
+    {t:'ATC held Flight 11 over waypoint Charlie.', c:false}
+  ]},
+  { id:'dr6', audio:'dr6', options:[
+    {t:'The crew flew through light turbulence.', c:false},
+    {t:'The crew flew through severe crosswind.', c:true},
+    {t:'The crew flew through heavy rain.', c:false}
+  ]},
+  { id:'dr7', audio:'dr7', options:[
+    {t:'Ground control cleared Flight 11 to taxi.', c:true},
+    {t:'Ground control cleared Flight 11 to land.', c:false},
+    {t:'Ground control cleared Flight 11 to hold.', c:false}
+  ]},
+  { id:'dr8', audio:'dr8', options:[
+    {t:'Mechanics calibrated the airspeed indicator.', c:false},
+    {t:'Mechanics calibrated the altimeter instruments.', c:true},
+    {t:'Mechanics calibrated the transponder.', c:false}
+  ]},
+  { id:'dr9', audio:'dr9', options:[
+    {t:'The aircraft landed at the original airport.', c:false},
+    {t:'The aircraft landed safely at the alternate airport.', c:true},
+    {t:'The aircraft landed at a military base.', c:false}
+  ]},
+  { id:'dr10', audio:'dr10', options:[
+    {t:'The crew departed from Runway 18 Right.', c:false},
+    {t:'The crew departed from Runway 22 Left.', c:true},
+    {t:'The crew departed from Runway 27 Center.', c:false}
+  ]},
+  { id:'dr11', audio:'dr11', options:[
+    {t:'The pilot initiated the go-around procedure.', c:true},
+    {t:'The pilot initiated the descent procedure.', c:false},
+    {t:'The pilot initiated the approach procedure.', c:false}
+  ]},
+  { id:'dr12', audio:'dr12', options:[
+    {t:'The captain spoke with the passengers.', c:false},
+    {t:'The captain spoke with apron operations.', c:true},
+    {t:'The captain spoke with the mechanics.', c:false}
+  ]},
+  { id:'dr13', audio:'dr13', options:[
+    {t:'The controller requested an ident.', c:true},
+    {t:'The controller requested a readback.', c:false},
+    {t:'The controller requested a frequency change.', c:false}
+  ]},
+  { id:'dr14', audio:'dr14', options:[
+    {t:'The crew checked the altimeter before takeoff.', c:false},
+    {t:'The crew checked the transponder before takeoff.', c:true},
+    {t:'The crew checked the flaps before takeoff.', c:false}
+  ]},
+  { id:'dr15', audio:'dr15', options:[
+    {t:'The aircraft arrived at the gate late.', c:false},
+    {t:'The aircraft arrived at the gate on time.', c:true},
+    {t:'The aircraft arrived at the gate early.', c:false}
+  ]},
+  { id:'dr16', audio:'dr16', options:[
+    {t:'The crew authorized a direct descent.', c:false},
+    {t:'The crew authorized a direct climb.', c:true},
+    {t:'The crew authorized a direct turn.', c:false}
+  ]}
+];
+
+const drillState = {};
+
+function buildDrill(){
+  const area = document.getElementById('drillArea');
+  area.innerHTML = DRILL_DATA.map((item, i) => {
+    drillState[item.id] = { attempts:0, solved:false, maxAttempts:3 };
+    const shuffled = shuffle([...item.options]);
+    return `
+      <div class="question-block" id="${item.id}">
+        <div class="q-text">${i+1}. Listen and choose what you heard: <span class="attempt-tag" id="${item.id}-tag">0/3 attempts</span></div>
+        <div class="audio-btn-group" style="margin-bottom:12px;">
+          <button class="audio-btn play-btn small" onclick="playAudio('${item.audio}')">🔊</button>
+          <button class="audio-btn pause-btn small" onclick="pauseAudio()">⏸</button>
+        </div>
+        <div class="opt-grid">
+          ${shuffled.map(o => `<button class="opt-btn" onclick="checkDrill('${item.id}', this, ${o.c})">${o.t}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function checkDrill(qid, btn, isCorrect){
+  const state = drillState[qid];
+  if(state.solved) return;
+  if(state.attempts >= state.maxAttempts) return;
+
+  const block = document.getElementById(qid);
+  const tag = document.getElementById(qid+'-tag');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+    state.solved = true;
+    addCorrect('s4');
+    playDing();
+    tag.textContent = '✔ Correct! (' + (state.attempts+1) + '/3)';
+    tag.style.color = 'var(--green)';
+    tag.style.background = '#e8f9ee';
+  } else {
+    btn.classList.add('wrong');
+    state.attempts++;
+    addWrong('s4');
+    playBuzz();
+    const rem = state.maxAttempts - state.attempts;
+    tag.textContent = state.attempts + '/3 attempts — ' + rem + ' left';
+    tag.style.color = 'var(--red)';
+    tag.style.background = '#fdecec';
+    setTimeout(()=>{ btn.classList.remove('wrong'); }, 600);
+
+    if(state.attempts >= state.maxAttempts){
+      block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+      tag.textContent = '❌ Max attempts (3/3)';
+      tag.className = 'attempt-tag maxed';
+    }
+  }
+}
+
+/* ============================================================
+   SECTION 5 — PAST VERB RECOGNITION (15)
+   ============================================================ */
+const VERB_RECOG_DATA = [
+  { id:'vr1',  audio:'vr1',  verb:'landed',   options:[
+    {t:'landed', c:true},{t:'diverted', c:false},{t:'held', c:false},{t:'flew', c:false}
+  ]},
+  { id:'vr2',  audio:'vr2',  verb:'inspected', options:[
+    {t:'inspected', c:true},{t:'calibrated', c:false},{t:'checked', c:false},{t:'cleared', c:false}
+  ]},
+  { id:'vr3',  audio:'vr3',  verb:'diverted',  options:[
+    {t:'diverted', c:true},{t:'departed', c:false},{t:'landed', c:false},{t:'arrived', c:false}
+  ]},
+  { id:'vr4',  audio:'vr4',  verb:'held',      options:[
+    {t:'held', c:true},{t:'flew', c:false},{t:'set', c:false},{t:'took', c:false}
+  ]},
+  { id:'vr5',  audio:'vr5',  verb:'flew',      options:[
+    {t:'flew', c:true},{t:'rose', c:false},{t:'spoke', c:false},{t:'told', c:false}
+  ]},
+  { id:'vr6',  audio:'vr6',  verb:'spoke',     options:[
+    {t:'spoke', c:true},{t:'read', c:false},{t:'told', c:false},{t:'set', c:false}
+  ]},
+  { id:'vr7',  audio:'vr7',  verb:'set',       options:[
+    {t:'set', c:true},{t:'held', c:false},{t:'read', c:false},{t:'flew', c:false}
+  ]},
+  { id:'vr8',  audio:'vr8',  verb:'cleared',   options:[
+    {t:'cleared', c:true},{t:'checked', c:false},{t:'calibrated', c:false},{t:'requested', c:false}
+  ]},
+  { id:'vr9',  audio:'vr9',  verb:'calibrated', options:[
+    {t:'calibrated', c:true},{t:'inspected', c:false},{t:'requested', c:false},{t:'authorized', c:false}
+  ]},
+  { id:'vr10', audio:'vr10', verb:'rose',      options:[
+    {t:'rose', c:true},{t:'flew', c:false},{t:'held', c:false},{t:'set', c:false}
+  ]},
+  { id:'vr11', audio:'vr11', verb:'departed',  options:[
+    {t:'departed', c:true},{t:'arrived', c:false},{t:'diverted', c:false},{t:'landed', c:false}
+  ]},
+  { id:'vr12', audio:'vr12', verb:'initiated', options:[
+    {t:'initiated', c:true},{t:'authorized', c:false},{t:'requested', c:false},{t:'calibrated', c:false}
+  ]},
+  { id:'vr13', audio:'vr13', verb:'requested', options:[
+    {t:'requested', c:true},{t:'cleared', c:false},{t:'checked', c:false},{t:'delayed', c:false}
+  ]},
+  { id:'vr14', audio:'vr14', verb:'arrived',   options:[
+    {t:'arrived', c:true},{t:'departed', c:false},{t:'landed', c:false},{t:'diverted', c:false}
+  ]},
+  { id:'vr15', audio:'vr15', verb:'authorized', options:[
+    {t:'authorized', c:true},{t:'initiated', c:false},{t:'cleared', c:false},{t:'requested', c:false}
+  ]}
+];
+
+const verbRecogState = {};
+
+function buildVerbRecog(){
+  const area = document.getElementById('verbRecogArea');
+  area.innerHTML = VERB_RECOG_DATA.map((item, i) => {
+    verbRecogState[item.id] = { attempts:0, solved:false, maxAttempts:3 };
+    const shuffled = shuffle([...item.options]);
+    return `
+      <div class="question-block" id="${item.id}">
+        <div class="q-text">${i+1}. Listen and choose the past verb you heard: <span class="attempt-tag" id="${item.id}-tag">0/3 attempts</span></div>
+        <div class="audio-btn-group" style="margin-bottom:12px;">
+          <button class="audio-btn play-btn small" onclick="playAudio('${item.audio}')">🔊</button>
+          <button class="audio-btn pause-btn small" onclick="pauseAudio()">⏸</button>
+        </div>
+        <div class="opt-grid">
+          ${shuffled.map(o => `<button class="opt-btn" onclick="checkVerbRecog('${item.id}', this, ${o.c})">${o.t}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function checkVerbRecog(qid, btn, isCorrect){
+  const state = verbRecogState[qid];
+  if(state.solved) return;
+  if(state.attempts >= state.maxAttempts) return;
+
+  const block = document.getElementById(qid);
+  const tag = document.getElementById(qid+'-tag');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+    state.solved = true;
+    addCorrect('s5');
+    playDing();
+    tag.textContent = '✔ Correct! (' + (state.attempts+1) + '/3)';
+    tag.style.color = 'var(--green)';
+    tag.style.background = '#e8f9ee';
+  } else {
+    btn.classList.add('wrong');
+    state.attempts++;
+    addWrong('s5');
+    playBuzz();
+    const rem = state.maxAttempts - state.attempts;
+    tag.textContent = state.attempts + '/3 attempts — ' + rem + ' left';
+    tag.style.color = 'var(--red)';
+    tag.style.background = '#fdecec';
+    setTimeout(()=>{ btn.classList.remove('wrong'); }, 600);
+
+    if(state.attempts >= state.maxAttempts){
+      block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+      tag.textContent = '❌ Max attempts (3/3)';
+      tag.className = 'attempt-tag maxed';
+    }
+  }
+}
+
+/* ============================================================
+   SECTION 6 — SIMPLE PAST (Regular vs Irregular)
+   ============================================================ */
+const PAST_DATA = [
+  { id:'sp1',  audio:'sp1',  options:[
+    {t:'🟦 REGULAR (-ed)', c:true},{t:'🟥 IRREGULAR', c:false}
+  ]},
+  { id:'sp2',  audio:'sp2',  options:[
+    {t:'🟦 REGULAR (-ed)', c:false},{t:'🟥 IRREGULAR', c:true}
+  ]},
+  { id:'sp3',  audio:'sp3',  options:[
+    {t:'🟦 REGULAR (-ed)', c:true},{t:'🟥 IRREGULAR', c:false}
+  ]},
+  { id:'sp4',  audio:'sp4',  options:[
+    {t:'🟦 REGULAR (-ed)', c:false},{t:'🟥 IRREGULAR', c:true}
+  ]},
+  { id:'sp5',  audio:'sp5',  options:[
+    {t:'🟦 REGULAR (-ed)', c:true},{t:'🟥 IRREGULAR', c:false}
+  ]},
+  { id:'sp6',  audio:'sp6',  options:[
+    {t:'🟦 REGULAR (-ed)', c:false},{t:'🟥 IRREGULAR', c:true}
+  ]},
+  { id:'sp7',  audio:'sp7',  options:[
+    {t:'🟦 REGULAR (-ed)', c:true},{t:'🟥 IRREGULAR', c:false}
+  ]},
+  { id:'sp8',  audio:'sp8',  options:[
+    {t:'🟦 REGULAR (-ed)', c:false},{t:'🟥 IRREGULAR', c:true}
+  ]},
+  { id:'sp9',  audio:'sp9',  options:[
+    {t:'🟦 REGULAR (-ed)', c:true},{t:'🟥 IRREGULAR', c:false}
+  ]},
+  { id:'sp10', audio:'sp10', options:[
+    {t:'🟦 REGULAR (-ed)', c:false},{t:'🟥 IRREGULAR', c:true}
+  ]}
+];
+
+const pastState = {};
+
+function buildGrammar(){
+  const area = document.getElementById('grammarArea');
+  area.innerHTML = PAST_DATA.map((item, i) => {
+    pastState[item.id] = { attempts:0, solved:false, maxAttempts:3 };
+    const shuffled = shuffle([...item.options]);
+    return `
+      <div class="question-block" id="${item.id}">
+        <div class="q-text">${i+1}. Listen and choose the type of past verb: <span class="attempt-tag" id="${item.id}-tag">0/3 attempts</span></div>
+        <div class="audio-btn-group" style="margin-bottom:12px;">
+          <button class="audio-btn play-btn small" onclick="playAudio('${item.audio}')">🔊</button>
+          <button class="audio-btn pause-btn small" onclick="pauseAudio()">⏸</button>
+        </div>
+        <div class="opt-grid">
+          ${shuffled.map(o => `<button class="opt-btn" onclick="checkGrammar('${item.id}', this, ${o.c})">${o.t}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function checkGrammar(qid, btn, isCorrect){
+  const state = pastState[qid];
+  if(state.solved) return;
+  if(state.attempts >= state.maxAttempts) return;
+
+  const block = document.getElementById(qid);
+  const tag = document.getElementById(qid+'-tag');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+    state.solved = true;
+    addCorrect('s6');
+    playDing();
+    tag.textContent = '✔ Correct! (' + (state.attempts+1) + '/3)';
+    tag.style.color = 'var(--green)';
+    tag.style.background = '#e8f9ee';
+  } else {
+    btn.classList.add('wrong');
+    state.attempts++;
+    addWrong('s6');
+    playBuzz();
+    const rem = state.maxAttempts - state.attempts;
+    tag.textContent = state.attempts + '/3 attempts — ' + rem + ' left';
+    tag.style.color = 'var(--red)';
+    tag.style.background = '#fdecec';
+    setTimeout(()=>{ btn.classList.remove('wrong'); }, 600);
+
+    if(state.attempts >= state.maxAttempts){
+      block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+      tag.textContent = '❌ Max attempts (3/3)';
+      tag.className = 'attempt-tag maxed';
+    }
+  }
+}
+
+/* ============================================================
+   SECTION 7 — CAPTAIN'S STORY (MCQ)
+   ============================================================ */
+const STORY_DATA = {
+  audio: 'story',
+  title: 'Captain Torres — Flight 11 Incident',
+  sub: 'Listen and answer the 6 comprehension questions',
+  questions: [
+    { id:'st1',
+      q:'What did the crew inspect before departure?',
+      options:[
+        {t:'The hydraulic seals', c:true},
+        {t:'The altimeter', c:false},
+        {t:'The transponder', c:false},
+        {t:'The flaps', c:false}
+      ]
+    },
+    { id:'st2',
+      q:'Why did the crew divert to an alternate airport?',
+      options:[
+        {t:'Due to heavy fog', c:true},
+        {t:'Due to a technical problem', c:false},
+        {t:'Due to strong crosswind', c:false},
+        {t:'Due to a medical emergency', c:false}
+      ]
+    },
+    { id:'st3',
+      q:'How long was Flight 11 held over waypoint Alpha?',
+      options:[
+        {t:'About fifteen minutes', c:true},
+        {t:'About two minutes', c:false},
+        {t:'About thirty minutes', c:false},
+        {t:'About one hour', c:false}
+      ]
+    },
+    { id:'st4',
+      q:'What happened to the cabin pressure?',
+      options:[
+        {t:'It rose suddenly after leveling off', c:true},
+        {t:'It dropped during descent', c:false},
+        {t:'It stayed stable the entire flight', c:false},
+        {t:'It decreased at cruise altitude', c:false}
+      ]
+    },
+    { id:'st5',
+      q:'Why did the pilot initiate a go-around?',
+      options:[
+        {t:'Due to unstable approach', c:true},
+        {t:'Due to fuel shortage', c:false},
+        {t:'Due to passenger emergency', c:false},
+        {t:'Due to runway closure', c:false}
+      ]
+    },
+    { id:'st6',
+      q:'What did ground control clear Flight 11 to do?',
+      options:[
+        {t:'Taxi to Runway 22 Left', c:true},
+        {t:'Land immediately', c:false},
+        {t:'Hold at waypoint Bravo', c:false},
+        {t:'Return to the gate', c:false}
+      ]
+    }
+  ]
+};
+
+const storyState = {};
+
+function buildStory(){
+  const area = document.getElementById('storyArea');
+  const questionsHTML = STORY_DATA.questions.map((q, i) => {
+    storyState[q.id] = { attempts:0, solved:false, maxAttempts:3 };
+    const shuffled = shuffle([...q.options]);
+    return `
+      <div class="question-block" id="${q.id}">
+        <div class="q-text">${i+1}. ${q.q} <span class="attempt-tag" id="${q.id}-tag">0/3 attempts</span></div>
+        <div class="opt-grid">
+          ${shuffled.map(o => `<button class="opt-btn" onclick="checkStory('${q.id}', this, ${o.c})">${o.t}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  area.innerHTML = `
+    <div class="audio-player-box">
+      <div class="audio-btn-group">
+        <button class="audio-btn play-btn" onclick="playAudio('${STORY_DATA.audio}')">🔊</button>
+        <button class="audio-btn pause-btn" onclick="pauseAudio()">⏸</button>
+      </div>
+      <div class="audio-info">
+        <h4>${STORY_DATA.title}</h4>
+        <p>${STORY_DATA.sub}</p>
+      </div>
+    </div>
+    ${questionsHTML}
+  `;
+}
+
+function checkStory(qid, btn, isCorrect){
+  const state = storyState[qid];
+  if(state.solved) return;
+  if(state.attempts >= state.maxAttempts) return;
+
+  const block = document.getElementById(qid);
+  const tag = document.getElementById(qid+'-tag');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+    state.solved = true;
+    addCorrect('s7');
+    playDing();
+    tag.textContent = '✔ Correct! (' + (state.attempts+1) + '/3)';
+    tag.style.color = 'var(--green)';
+    tag.style.background = '#e8f9ee';
+  } else {
+    btn.classList.add('wrong');
+    state.attempts++;
+    addWrong('s7');
+    playBuzz();
+    const rem = state.maxAttempts - state.attempts;
+    tag.textContent = state.attempts + '/3 attempts — ' + rem + ' left';
+    tag.style.color = 'var(--red)';
+    tag.style.background = '#fdecec';
+    setTimeout(()=>{ btn.classList.remove('wrong'); }, 600);
+
+    if(state.attempts >= state.maxAttempts){
+      block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+      tag.textContent = '❌ Max attempts (3/3)';
+      tag.className = 'attempt-tag maxed';
+    }
+  }
+}
+
+/* ============================================================
+   SECTION 8 — LISTENING ROLEPLAY
+   ============================================================ */
+const ROLEPLAY_DATA = [
+  { id:'rp1', audio:'rp1', options:[
+    {t:'The hydraulic seals.', c:true},
+    {t:'The altimeter.', c:false},
+    {t:'The flaps.', c:false}
+  ]},
+  { id:'rp2', audio:'rp2', options:[
+    {t:'Due to heavy fog.', c:true},
+    {t:'Due to a technical problem.', c:false},
+    {t:'Due to airport congestion.', c:false}
+  ]},
+  { id:'rp3', audio:'rp3', options:[
+    {t:'The transponder code.', c:true},
+    {t:'The altimeter.', c:false},
+    {t:'The flight plan.', c:false}
+  ]},
+  { id:'rp4', audio:'rp4', options:[
+    {t:'ATC held Flight 11.', c:true},
+    {t:'ATC cleared Flight 11.', c:false},
+    {t:'ATC diverted Flight 11.', c:false}
+  ]},
+  { id:'rp5', audio:'rp5', options:[
+    {t:'Severe crosswind.', c:true},
+    {t:'Light turbulence.', c:false},
+    {t:'Heavy rain.', c:false}
+  ]},
+  { id:'rp6', audio:'rp6', options:[
+    {t:'Ground control cleared Flight 11 to taxi.', c:true},
+    {t:'Ground control cleared Flight 11 to land.', c:false},
+    {t:'Ground control cleared Flight 11 to hold.', c:false}
+  ]},
+  { id:'rp7', audio:'rp7', options:[
+    {t:'The altimeter instruments.', c:true},
+    {t:'The transponder.', c:false},
+    {t:'The hydraulic seals.', c:false}
+  ]},
+  { id:'rp8', audio:'rp8', options:[
+    {t:'Due to unstable approach.', c:true},
+    {t:'Due to weather.', c:false},
+    {t:'Due to fuel shortage.', c:false}
+  ]},
+  { id:'rp9', audio:'rp9', options:[
+    {t:'Over waypoint Alpha.', c:true},
+    {t:'Over waypoint Bravo.', c:false},
+    {t:'Over waypoint Charlie.', c:false}
+  ]},
+  { id:'rp10', audio:'rp10', options:[
+    {t:'The captain spoke with apron operations.', c:true},
+    {t:'The captain spoke with the passengers.', c:false},
+    {t:'The captain spoke with the mechanics.', c:false}
+  ]}
+];
+
+const roleplayState = {};
+
+function buildRoleplay(){
+  const area = document.getElementById('roleplayArea');
+  area.innerHTML = ROLEPLAY_DATA.map((item, i) => {
+    roleplayState[item.id] = { attempts:0, solved:false, maxAttempts:3 };
+    const shuffled = shuffle([...item.options]);
+    return `
+      <div class="question-block" id="${item.id}">
+        <div class="q-text">${i+1}. Listen and choose the correct response: <span class="attempt-tag" id="${item.id}-tag">0/3 attempts</span></div>
+        <div class="audio-btn-group" style="margin-bottom:12px;">
+          <button class="audio-btn play-btn small" onclick="playAudio('${item.audio}')">🔊</button>
+          <button class="audio-btn pause-btn small" onclick="pauseAudio()">⏸</button>
+        </div>
+        <div class="opt-grid">
+          ${shuffled.map(o => `<button class="opt-btn" onclick="checkRoleplay('${item.id}', this, ${o.c})">${o.t}</button>`).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function checkRoleplay(qid, btn, isCorrect){
+  const state = roleplayState[qid];
+  if(state.solved) return;
+  if(state.attempts >= state.maxAttempts) return;
+
+  const block = document.getElementById(qid);
+  const tag = document.getElementById(qid+'-tag');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+    state.solved = true;
+    addCorrect('s8');
+    playDing();
+    tag.textContent = '✔ Correct! (' + (state.attempts+1) + '/3)';
+    tag.style.color = 'var(--green)';
+    tag.style.background = '#e8f9ee';
+  } else {
+    btn.classList.add('wrong');
+    state.attempts++;
+    addWrong('s8');
+    playBuzz();
+    const rem = state.maxAttempts - state.attempts;
+    tag.textContent = state.attempts + '/3 attempts — ' + rem + ' left';
+    tag.style.color = 'var(--red)';
+    tag.style.background = '#fdecec';
+    setTimeout(()=>{ btn.classList.remove('wrong'); }, 600);
+
+    if(state.attempts >= state.maxAttempts){
+      block.querySelectorAll('.opt-btn').forEach(b => { b.style.pointerEvents='none'; b.disabled=true; });
+      tag.textContent = '❌ Max attempts (3/3)';
+      tag.className = 'attempt-tag maxed';
+    }
+  }
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+const phaseBtns = document.querySelectorAll('.phase-btn');
+const phases = document.querySelectorAll('.phase');
+
+function goToPhase(n){
+  phases.forEach(p => p.classList.remove('active'));
+  phaseBtns.forEach(b => b.classList.remove('active'));
+  document.getElementById('phase'+n).classList.add('active');
+  document.querySelector(`.phase-btn[data-phase="${n}"]`).classList.add('active');
+  document.getElementById('topProgress').style.width = (n/9*100)+'%';
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(n == 9) renderFinalReview();
+}
+phaseBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=> goToPhase(parseInt(btn.dataset.phase)));
+});
+
+/* ============================================================
+   FINAL REVIEW
+   ============================================================ */
+function renderFinalReview(){
+  const totalAttempts = STATS.totalCorrect + STATS.totalWrong;
+  const pct = totalAttempts > 0 ? Math.round((STATS.totalCorrect/totalAttempts)*100) : 0;
+  const passed = pct >= 80;
+
+  let medal = '🥉', label = 'Keep practicing Flight 11!';
+  if(pct >= 90){ medal = '🥇'; label = 'Excellent! Flight 11 Mastery!'; }
+  else if(pct >= 80){ medal = '🥈'; label = 'Great job! Flight 11 achieved!'; }
+  else { medal = '🥉'; label = 'Below 80%. You must repeat the entire Lab.'; }
+
+  const rows = [
+    {label:'1. Complete Word (20)', val:STATS.sections.s1.correct, max:STATS.sections.s1.max},
+    {label:'2. Medium Listening', val:STATS.sections.s2.correct, max:STATS.sections.s2.max},
+    {label:'3. Long Listening', val:STATS.sections.s3.correct, max:STATS.sections.s3.max},
+    {label:'4. Listening Drill (16)', val:STATS.sections.s4.correct, max:STATS.sections.s4.max},
+    {label:'5. Past Verb Recognition', val:STATS.sections.s5.correct, max:STATS.sections.s5.max},
+    {label:'6. Reg vs Irreg', val:STATS.sections.s6.correct, max:STATS.sections.s6.max},
+    {label:'7. Captain\'s Story', val:STATS.sections.s7.correct, max:STATS.sections.s7.max},
+    {label:'8. Listening Roleplay', val:STATS.sections.s8.correct, max:STATS.sections.s8.max},
+  ];
+
+  let resultHTML = '';
+  if(passed){
+    resultHTML = `<div class="result-box pass">✅ <strong>PASSED!</strong> You achieved ${pct}% — above the 80% requirement. Well done, Captain!</div>`;
+  } else {
+    resultHTML = `<div class="result-box fail">❌ <strong>NOT PASSED</strong> — You achieved ${pct}%. The minimum required is 80%. You must repeat the entire Lab.</div>`;
+  }
+
+  document.getElementById('finalArea').innerHTML = `
+    <div class="final-card">
+      <div class="medal">${medal}</div>
+      <h3>Flight 11 — Complete!</h3>
+      <div class="medal-label">${label}</div>
+      <div class="final-score-big">${pct}%</div>
+      <div class="final-score-sub">✅ ${STATS.totalCorrect} correct · ❌ ${STATS.totalWrong} errors · Total attempts: ${totalAttempts}</div>
+      ${resultHTML}
+      <div class="final-breakdown">
+        ${rows.map(r => `
+          <div class="fb-row">
+            <div class="fb-label">${r.label}</div>
+            <div class="fb-bar-outer"><div class="fb-bar-inner" style="width:${r.max > 0 ? (r.val/r.max*100) : 0}%;"></div></div>
+            <div class="fb-val">${r.val}/${r.max}</div>
+          </div>
+        `).join('')}
+      </div>
+      <button class="restart-btn" onclick="location.reload()">✈️ ${passed ? 'Fly Flight 11 Again' : 'Repeat Flight 11 (Required)'}</button>
+    </div>
+  `;
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+buildComplete();
+buildListening('listenMediumArea', LISTEN_MEDIUM, 's2');
+buildListening('listenLongArea', LISTEN_LONG, 's3');
+buildDrill();
+buildVerbRecog();
+buildGrammar();
+buildStory();
+buildRoleplay();
+goToPhase(1);
+
+setTimeout(()=>{
+  if('speechSynthesis' in window) window.speechSynthesis.getVoices();
+}, 500);
+</script>
+</body>
+</html>
